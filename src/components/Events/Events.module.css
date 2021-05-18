@@ -1,0 +1,65 @@
+img {
+   max-width: 800px;
+}
+
+h1, h2, h3 {
+   text-align: center;
+}
+
+h1 {
+   color: darkblue;
+   text-decoration: ButtonFace;
+}
+
+
+h2, h3 {
+   color: darkcyan;
+}
+
+.error {
+   color: crimson;
+}
+
+form {
+   width: 800px;
+   margin: auto;
+}
+
+label {
+   float: right;
+   padding-right: 10px;
+}
+
+.field {
+   display: grid;
+   grid-template-columns: 200px 75%;
+   margin: 10px;
+}
+
+input, textarea {
+   padding: 1px 5px 1px 5px;
+   width: 400px;
+   border: black;
+}
+
+button {
+   margin-left: 210px;
+}
+
+.formContent button {
+   margin: 0 auto;
+   display: block;
+}
+
+.addEvent button {
+   margin: 0 auto;
+   display: block;
+}
+
+.preloader {
+   text-align: center;
+}
+
+.preloader img {
+   max-height: 100px;
+}

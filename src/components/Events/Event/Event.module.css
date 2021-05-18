@@ -1,0 +1,56 @@
+.poster {
+    margin: auto;
+    text-align: center;
+}
+
+.poster img {
+    max-height: 300px;
+}
+
+
+.content {
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.list {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 200px 300px;
+    margin: 0 auto;
+}
+.item div {
+    padding: 0px 10px 0px 10px;
+}
+
+.s.closeButton {
+    margin-left: 220px;
+    color: brown;
+}
+
+.event {
+    margin: 10px;
+}
+
+.payTicket {
+    padding-bottom: 40px;
+}
+
+.payTicket h4 {
+    text-align: center;
+    color: deepskyblue;
+}
+
+.preloader img {
+    margin-left: 200px;
+    max-height: 100px;
+}
