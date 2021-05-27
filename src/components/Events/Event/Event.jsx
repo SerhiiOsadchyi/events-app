@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Button, Divider} from "antd";
 import s from './Event.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {buyTicketAC, closeEventAC} from "../../../redux/events-reducer";
+import {sellTicketAC, closeEventAC} from "../../../redux/events-reducer";
 import Preloader from "../../common/Preloader/Preloader";
 
 const Event = React.memo(({event}) => {
@@ -29,8 +29,9 @@ const Event = React.memo(({event}) => {
         dispatch(closeEventAC(event.eventID, userAddress));
         setIsClose(true)
     }
+
     const buyTicket = () => {
-        dispatch(buyTicketAC(event.eventID, event.ticketsPrice, userAddress));
+        dispatch(sellTicketAC( userAddress, event.name, event.eventID, event.ticketsPrice, event.ticketsTotal ));
     }
 
     return (

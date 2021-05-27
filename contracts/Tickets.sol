@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 
 pragma solidity >=0.6.2 <0.9.0;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -10,7 +11,7 @@ contract TicketsFactory is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    event NewTicketCreated(uint indexed ticketId, address newOwner);
+    event NewTicketCreated(uint indexed ticketId, address ticketOwner);
     event TicketsNotAvailable(uint indexed eventId);
 
     address payable public owner;
@@ -20,13 +21,14 @@ contract TicketsFactory is ERC721 {
     uint public eventId;
     string public eventName;
     bool public isTicketsAvailable = true;
-
+    string public ticketSymbol = "T";
 
     struct Ticket {
         uint id;
         uint eventId;
         string eventName;
-        address newOwner;
+        uint ticketPrice;
+        address ticketOwner;
     }
 
     Ticket[] public tickets;
@@ -42,7 +44,7 @@ contract TicketsFactory is ERC721 {
         string memory _eventName,
         uint _price,
         uint _ticketsTotal
-    ) public ERC721(_eventName, "T") {
+    ) public ERC721(_eventName, ticketSymbol) {
         owner = _owner;
         eventName = _eventName;
         eventFactoryAddress = _eventFactoryAddress;
@@ -66,29 +68,99 @@ contract TicketsFactory is ERC721 {
         _;
     }
 
-    function mint() public payable {
-        _tokenIds.increment();
-        uint newTokenId = _tokenIds.current();
+    function sellTicket() public payable returns (uint256) {
 
-        owner.transfer(msg.value);
-        _mint(msg.sender, newTokenId);
+         _tokenIds.increment();
+         owner.transfer(msg.value);
 
-        Ticket memory ticket = Ticket(newTokenId, eventId, msg.sender);
-        tickets.push(ticket);
+         uint ticketId = _tokenIds.current();
+         Ticket memory ticket = Ticket(ticketId, eventId, eventName, price, msg.sender);
+         tickets.push(ticket);
 
-        emit NewTicketCreated(newTokenId, msg.sender);
+         _mint(msg.sender, ticketId);
 
-        if(newTokenId == ticketsTotal) {
-            isTicketsAvailable = false;
-            emit TicketsNotAvailable(eventId);
-        }
-    }
+         emit NewTicketCreated(ticketId, msg.sender);
+
+         if(ticketId == ticketsTotal) {
+             isTicketsAvailable = false;
+             emit TicketsNotAvailable(eventId);
+         }
+
+         return ticketId;
+     }
 
     function changeTicketOwner(uint _id, address payable _newOwnerAddress) public payable onlyOwner {
-        safeTransferFrom(owner, _newOwnerAddress, tickets[_id].id);
+        address ticketOwner = tickets[_id].ticketOwner;
+        require(msg.sender == ticketOwner, "Only ticket's' owner can call this function");
+        safeTransferFrom(ticketOwner, _newOwnerAddress, tickets[_id].id);
     }
 
 }
+
+/*
+        for(uint256 i = 1; i <= totalSupply; i++){
+            _tokenIds.increment();
+            uint256 ticketId = _tokenIds.current();
+            _mint(owner, ticketId);
+            Ticket memory ticket = Ticket(ticketId, eventId, eventName, price, msg.sender);
+            tickets.push(ticket);
+        }
+*/
+
+/*    function sellTicket() public payable returns (uint256) {
+        _ticketOwner = tickets[ticketId].ticketOwner;
+        _ticketOwner.transfer(msg.value);
+
+        changeTicketOwner(ticketId, msg.sender);
+
+        ticketId++;
+
+        if(ticketId == totalSupply) {
+            isTicketsAvailable = false;
+            emit TicketsNotAvailable(eventId);
+        }
+
+        return ticketId;
+    }*/
+
+
+
+/*
+        for(uint256 i = 1; i<= totalSupply; i++){
+            _tokenIds.increment();
+            uint256 ticketId = _tokenIds.current();
+            _mint(owner, ticketId);
+        }*/
+
+/*    function transferEth() public payable returns (uint256) {
+        owner.transfer(msg.value);
+        return msg.value;
+    }
+
+    function addTicket() public returns (uint256) {
+        _ticketsId.increment();
+        ticketId = _ticketsId.current();
+        Ticket memory newTicket = Ticket(ticketId, eventId, eventName, msg.sender);
+        tickets.push(newTicket);
+
+        if(ticketId == ticketsTotal) {
+            isTicketsAvailable = false;
+            emit TicketsNotAvailable(eventId);
+        }
+
+        return ticketId;
+    }
+
+    function mintTicket() public payable returns (uint256) {
+        _mint(msg.sender, ticketId);
+        emit NewTicketCreated(ticketId, msg.sender);
+        return ticketId;
+    }
+
+    function ticketsList() public view returns (uint){
+        return tickets.length;
+    }*/
+
 
 /*
 USE CASE / USER STORIES

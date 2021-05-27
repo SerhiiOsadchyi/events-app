@@ -29,7 +29,11 @@ export const actions = {
 }
 
 export const setAccount = () => async (dispatch) => {
+    debugger
     const accounts = await eventsAPI.auth();
+    if(!accounts){
+        return console.log('Something is wrong. Please, try to connect again')
+    }
     const account = accounts[0];
     let isOwner = false;
     if(account === ownerAddress){

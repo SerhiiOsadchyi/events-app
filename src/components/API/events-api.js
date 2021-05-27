@@ -1,19 +1,31 @@
-//import Web3 from 'web3';
-//const Web3 = require('web3');
-import Web3 from "web3";
+const Web3 = require('web3');
+const web3 = new Web3(Web3.givenProvider || 'http://127.0.0.1:7545');
 
-const web3 = new Web3(window.ethereum);
-//const web3 = new Web3(Web3.givenProvider)
-const TicketsFactory = require('../../ABIs/TicketsFactory.json');
+//web3 from Truffle doc
+/*if (typeof web3 !== 'undefined') {
+    App.web3Provider = web3.currentProvider;
+    web3 = new Web3(web3.currentProvider);
+} else {
+    // If no injected web3 instance is detected, fallback to Ganache.
+    App.web3Provider = new web3.providers.HttpProvider('http://127.0.0.1:7545');
+    web3 = new Web3(App.web3Provider);
+}*/
+
+//web3 for Truffle
+/*const ganache = require("ganache-core");
+const web3 = new Web3(ganache.provider());*/
+
+//abi for Truffle
 //const TicketsFactory = require('../../../build/contracts/TicketsFactory.json');
-const EventFactory = require('../../ABIs/EventFactory.json');
 //const EventFactory = require('../../../build/contracts/EventFactory.json');
-const contractAddress = '0xcb7b5e994b5d3d247b1d4a26e5fcb158679bdb31';
+
+//ABI for Ropsten
+const TicketsFactory = require('../../ABIs/TicketsFactory.json');
+const EventFactory = require('../../ABIs/EventFactory.json');
+
+const contractAddress = '0x257f7e36037eb35f03aed09ccbd7cf8c5222378e';
 
 export const ownerAddress = '0x579a7303065e83B7c2999d6c8FB9a64272d68275';
-
-// Cannot read property 'Contract' of undefined  - What's a problem?
-//const eventProductionContract = new Web3.eth.Contract(EventFactory.abi, "0xf6a5c33d1b5e2a903daa4e9b1121c363e53b900d" );
 
 const eventProductionContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
 const eventMethods = eventProductionContract.methods;
@@ -27,11 +39,9 @@ export const eventsAPI = {
                 return response
             })
         } else return 'Error connect to MetaMask'
-
     },
 
     addNewEvent(values, userAddress) {
-        debugger
         if (userAddress) {
             return eventMethods.addEvent(
                 values.eventName,
@@ -57,17 +67,36 @@ export const eventsAPI = {
         return eventMethods.closeEvent(eventId).send({from: userAddress})
     },
 
-    buyTicketAPI(eventID, ticketsPrice, userAddress) {
+    sellTicketAPI(userAddress, eventName, eventID, ticketsPrice, ticketsTotal) {
         debugger
-        const TicketsFactoryContract = new web3.eth.Contract(TicketsFactory.abi, contractAddress);
-        console.log(TicketsFactoryContract.methods);
-        TicketsFactoryContract.methods.sellTicket().send({from: userAddress, value: ticketsPrice})
+        const ticketsMethods = new web3.eth.Contract(TicketsFactory.abi, contractAddress).methods;
+        console.log(ticketsMethods);
+        let price = Number(ticketsPrice);
+        ticketsMethods.sellTicket().send({from: userAddress, value: price})
             .on('transactionHash', function (hash) {
                 console.log('hash');
                 //alert('hash');
                 console.log(hash);
                 // alert(hash)
             })
+
+    /*   debugger
+        const transferedEth = await ticketsMethods.transferEth().send({from: userAddress, value: ticketsPrice});
+        console.log('transferedEth ' + transferedEth);*/
+
+      /*  debugger
+        const ticketId = await ticketsMethods.addTicket();
+        console.log('ticketId ' + ticketId);
+
+        debugger
+        const mintedTicketId = await ticketsMethods.mintTicket();
+        console.log('mintedTicketId ' + mintedTicketId);
+
+        debugger
+        const tickets = await ticketsMethods.ticketsList();
+        console.log('tickets ' + tickets);
+*/
+
 
         /* .on('confirmation', function (confirmationNumber, receipt) {
              console.log('confirmationNumber');

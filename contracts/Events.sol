@@ -31,6 +31,8 @@ contract EventsFactory {
 
     Event[] public events;
 
+    mapping(uint => TicketsFactory) public ticketsForEvents;
+
     constructor() public {
         owner = payable(msg.sender);
     }
@@ -59,10 +61,13 @@ contract EventsFactory {
         uint eventID = _eventsID.current();
         address eventFactoryAddress = address(this);
 
-        TicketsFactory _ticketsForEvent = new TicketsFactory(owner, eventFactoryAddress, eventID, _name, _ticketsPrice, _ticketsTotal);
+        TicketsFactory _ticketsForEvent = new TicketsFactory(owner, eventFactoryAddress, eventID, _name,
+            _ticketsPrice, _ticketsTotal);
+
+        ticketsForEvents[eventID] =  _ticketsForEvent;
 
         Event memory newEvent = Event(eventID, address(_ticketsForEvent), _name, _description, _location,
-            _imageURL, _ticketsTotal,  _ticketsPrice, _startDate, _endDate, false);
+            _imageURL, _ticketsTotal, _ticketsPrice, _startDate, _endDate, false);
 
         events.push(newEvent);
         emit NewEventAdded(eventID);
@@ -71,6 +76,7 @@ contract EventsFactory {
     function closeEvent(uint _id) public onlyOwner {
         events[_id].isLocked = true;
     }
+
     function eventsList() public view returns (Event[] memory){
         return events;
     }

@@ -69,9 +69,9 @@ export const closeEventAC = (eventID, userAddress) => async (dispatch) => {
     dispatch(getEvents())
 };
 
-export const buyTicketAC = (eventID, ticketsPrice, userAddress) => async (dispatch) => {
+export const sellTicketAC = (userAddress, eventName, eventID, ticketsPrice, ticketsTotal) => async (dispatch) => {
 
-    await eventsAPI.buyTicketAPI(eventID, ticketsPrice, userAddress);
+    await eventsAPI.sellTicketAPI(userAddress, eventName, eventID, ticketsPrice, ticketsTotal);
     //const data = await eventsAPI.getTicketState();
     //dispatch(getEvents());
 };
