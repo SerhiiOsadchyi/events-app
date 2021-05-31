@@ -10,6 +10,7 @@ import Preloader from "../common/Preloader/Preloader";
 
 const Events = React.memo(() => {
 
+    const stateView = useSelector(state => state.eventsPage);
     const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner =  useSelector(state => state.userAuthorize.isOwner);
     const events = useSelector(state => state.eventsPage.events);
@@ -17,6 +18,8 @@ const Events = React.memo(() => {
 
     const [newEventMode, setNewEventMode] = useState(false);
 
+debugger
+    console.log(stateView)
 
     const dispatch = useDispatch();
 

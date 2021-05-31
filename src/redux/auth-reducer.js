@@ -2,8 +2,6 @@ import {eventsAPI, ownerAddress} from "../components/API/events-api";
 
 const LOGIN = 'auth-reducer/LOGIN';
 
-//export const defaultAddress0x40 = '0x0000000000000000000000000000000000000000';
-
 const initialState = {
     isAuth: false,
     authAccount: '',
@@ -29,17 +27,19 @@ export const actions = {
 }
 
 export const setAccount = () => async (dispatch) => {
-    debugger
     const accounts = await eventsAPI.auth();
+
     if(!accounts){
         return console.log('Something is wrong. Please, try to connect again')
     }
+
     const account = accounts[0];
     let isOwner = false;
+
     if(account === ownerAddress){
         isOwner = true
     }
-    debugger
+
     dispatch(actions.login(account, isOwner, ownerAddress))
 }
 

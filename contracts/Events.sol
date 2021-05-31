@@ -31,7 +31,7 @@ contract EventsFactory {
 
     Event[] public events;
 
-    mapping(uint => TicketsFactory) public ticketsForEvents;
+    mapping(uint => TicketsFactory) public ticketsContracts;
 
     constructor() public {
         owner = payable(msg.sender);
@@ -61,12 +61,12 @@ contract EventsFactory {
         uint eventID = _eventsID.current();
         address eventFactoryAddress = address(this);
 
-        TicketsFactory _ticketsForEvent = new TicketsFactory(owner, eventFactoryAddress, eventID, _name,
+        TicketsFactory _ticketsContract = new TicketsFactory(owner, eventFactoryAddress, eventID, _name,
             _ticketsPrice, _ticketsTotal);
 
-        ticketsForEvents[eventID] =  _ticketsForEvent;
+        ticketsContracts[eventID] =  _ticketsContract;
 
-        Event memory newEvent = Event(eventID, address(_ticketsForEvent), _name, _description, _location,
+        Event memory newEvent = Event(eventID, address(_ticketsContract), _name, _description, _location,
             _imageURL, _ticketsTotal, _ticketsPrice, _startDate, _endDate, false);
 
         events.push(newEvent);

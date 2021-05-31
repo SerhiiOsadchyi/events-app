@@ -11,7 +11,11 @@ const Event = React.memo(({event}) => {
     const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner = useSelector(state => state.userAuthorize.isOwner);
     const tickets = useSelector(state => state.eventsPage.tickets);
-    const [isClose, setIsClose] = useState(event.isLocked)
+    const isTransactionConfirmed = useSelector(state => state.eventsPage.isTransactionConfirmed);
+
+
+    const [isClose, setIsClose] = useState(event.isLocked);
+    const [isTransactionSent, setTransactionStatus] = useState(false);
 
     let ticketsRest = event.ticketsTotal;
     if (tickets[event.eventID] && tickets[event.eventID].length) {
@@ -31,7 +35,12 @@ const Event = React.memo(({event}) => {
     }
 
     const buyTicket = () => {
-        dispatch(sellTicketAC( userAddress, event.name, event.eventID, event.ticketsPrice, event.ticketsTotal ));
+        dispatch(sellTicketAC(userAddress, event.eventFactoryAddress, event.ticketsPrice));
+        setTransactionStatus(true)
+    }
+
+    if(isTransactionConfirmed && isTransactionSent) {
+        setTransactionStatus(false)
     }
 
     return (
@@ -82,7 +91,18 @@ const Event = React.memo(({event}) => {
             {ticketsRest > 0 ?
                 <div className={s.payTicket}>
                     {userAddress ?
-                        <Button onClick={buyTicket}> Buy ticket to the event</Button>
+                        <>
+                            {isTransactionSent ?
+                                    <>
+                                        <Button onClick={buyTicket} disabled> Buy ticket to the event</Button>
+                                        <h4>Please, waiting for confirm this transaction</h4>
+                                        <div className={s.preloader}>
+                                            <Preloader/>
+                                        </div>
+                                    </>
+                                    : <Button onClick={buyTicket}> Buy ticket to the event</Button>
+                            }
+                        </>
                         : <>
                             <h4>Please, authorize by MetaMask</h4>
                             <Button disabled onClick={buyTicket}> Buy ticket to the event</Button>

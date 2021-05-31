@@ -23,7 +23,7 @@ const web3 = new Web3(ganache.provider());*/
 const TicketsFactory = require('../../ABIs/TicketsFactory.json');
 const EventFactory = require('../../ABIs/EventFactory.json');
 
-const contractAddress = '0x257f7e36037eb35f03aed09ccbd7cf8c5222378e';
+const contractAddress = '0x41E9bc777248A4f047dE00A29d818E1D257CeB37';
 
 export const ownerAddress = '0x579a7303065e83B7c2999d6c8FB9a64272d68275';
 
@@ -57,6 +57,7 @@ export const eventsAPI = {
     },
 
     getEventsList() {
+        debugger
         if (window.ethereum) {
             return eventMethods.eventsList().call()
         } else return 'Error connect to MetaMask'
@@ -67,12 +68,9 @@ export const eventsAPI = {
         return eventMethods.closeEvent(eventId).send({from: userAddress})
     },
 
-    sellTicketAPI(userAddress, eventName, eventID, ticketsPrice, ticketsTotal) {
-        debugger
-        const ticketsMethods = new web3.eth.Contract(TicketsFactory.abi, contractAddress).methods;
-        console.log(ticketsMethods);
-        let price = Number(ticketsPrice);
-        ticketsMethods.sellTicket().send({from: userAddress, value: price})
+    sellTicketAPI(userAddress, eventFactoryAddress, ticketsPrice) {
+        const ticketsMethods = new web3.eth.Contract(TicketsFactory.abi, eventFactoryAddress).methods;
+        ticketsMethods.sellTicket().send({from: userAddress, value: ticketsPrice})
             .on('transactionHash', function (hash) {
                 console.log('hash');
                 //alert('hash');

@@ -4,14 +4,17 @@ const ADD_NEW_EVENT = 'events-reducer/ADD-NEW-EVENT';
 const CLOSE_EVENT = 'events-reducer/CLOSE_EVENT';
 const WAITING_FOR_ADD_EVENT = 'events-reducer/WAITING_FOR_ADD_EVENT';
 const BUY_TICKET = 'events-reducer/BUY_TICKET';
+const TICKET_SOLD_CONFIRMED = 'events-reducer/TICKET_SOLD_CONFIRMED';
 
 const initialState = {
     events: {},
     tickets: {},
     isEventAdded: true,
+    isTransactionConfirmed: true
 }
 
 const eventsReducer = (state = initialState, action) => {
+    debugger
     switch (action.type) {
         case WAITING_FOR_ADD_EVENT:
             return {
@@ -19,20 +22,20 @@ const eventsReducer = (state = initialState, action) => {
                 isEventAdded: action.flag
 
             };
-            case ADD_NEW_EVENT:
+        case ADD_NEW_EVENT:
             return {
                 ...state,
-                events: action.events,
+                events: action.events
             };
         case CLOSE_EVENT:
             return {
                 ...state,
                 events: [state.events.filter(id => id !== action.eventId)]
             };
-            case BUY_TICKET:
+        case TICKET_SOLD_CONFIRMED:
             return {
                 ...state,
-                events: [state.events.filter(id => id !== action.eventId)]
+                isTransactionConfirmed: action.flag
             };
 
 
@@ -44,6 +47,7 @@ const eventsReducer = (state = initialState, action) => {
 export const actions = {
     eventCreationFinished: (flag) => ({type: WAITING_FOR_ADD_EVENT, flag}),
     updateEventsList: (events) => ({type: ADD_NEW_EVENT, events}),
+    ticketSoldConfirmed: (flag) => ({type: TICKET_SOLD_CONFIRMED, flag}),
     //closeEvent: (eventId) => ({type: CLOSE_EVENT, eventId})
 }
 
@@ -52,11 +56,10 @@ export const addNewEvent = (value, userAddress) => async (dispatch) => {
     await eventsAPI.addNewEvent(value, userAddress);
     const data = await eventsAPI.getEventsList();
     dispatch(actions.updateEventsList(data));
-    //debugger
     dispatch(actions.eventCreationFinished(true))
 };
 
-export const getEvents = () =>  async (dispatch) => {
+export const getEvents = () => async (dispatch) => {
     debugger
     const data = await eventsAPI.getEventsList();
     if (data !== 'Error connect to MetaMask') {
@@ -69,11 +72,10 @@ export const closeEventAC = (eventID, userAddress) => async (dispatch) => {
     dispatch(getEvents())
 };
 
-export const sellTicketAC = (userAddress, eventName, eventID, ticketsPrice, ticketsTotal) => async (dispatch) => {
-
-    await eventsAPI.sellTicketAPI(userAddress, eventName, eventID, ticketsPrice, ticketsTotal);
-    //const data = await eventsAPI.getTicketState();
-    //dispatch(getEvents());
+export const sellTicketAC = (userAddress, eventFactoryAddress, ticketsPrice) => async (dispatch) => {
+    dispatch(actions.ticketSoldConfirmed(false));
+    await eventsAPI.sellTicketAPI(userAddress, eventFactoryAddress, ticketsPrice);
+    dispatch(actions.ticketSoldConfirmed(true));
 };
 
 export default eventsReducer;
