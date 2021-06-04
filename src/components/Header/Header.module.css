@@ -3,6 +3,10 @@
     text-align: right;
 }
 
+.content {
+    padding: 5px;
+}
+
 .button{
     margin: 5px;
 }
@@ -14,3 +18,4 @@
 .logo {
     text-align: left;
 }
+

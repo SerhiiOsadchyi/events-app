@@ -11,7 +11,7 @@ const HeaderApp = () => {
     const authAccount = useSelector(state => state.userAuthorize.authAccount);
     const dispatch = useDispatch();
 
-    return (<div>
+    return (<div className={s.content}>
             <Row>
                 <Col span={6}>
                     <div className="logo">
@@ -20,6 +20,7 @@ const HeaderApp = () => {
                              alt='logo'/>
                     </div>
                 </Col>
+
                 <Col span={18}>
                     <div className={s.login}>
                         {!isAuth ?
@@ -32,10 +33,11 @@ const HeaderApp = () => {
                             : <div>
                                 Your account: <b>{authAccount}</b>
                             </div>
-                        }}
+                        }
                     </div>
 
                 </Col>
+
             </Row>
 
         </div>

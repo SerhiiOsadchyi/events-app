@@ -1,4 +1,11 @@
-.App {
+.ant-layout-header {
+  background-color: slategrey;
+  color: white;
+  height: 80px;
+}
+
+
+/*.App {
   text-align: center;
 }
 
@@ -35,8 +42,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-.header {
-  background-color: cornflowerblue;
-  color: white
-}
+}*/

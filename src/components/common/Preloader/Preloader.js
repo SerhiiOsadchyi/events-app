@@ -1,4 +1,4 @@
-import loadingImage from "../../../assets/image/loading4.gif";
+import loadingImage from "../../../assets/image/spinner2.gif";
 import React from "react";
 
 let Preloader = (props) => {

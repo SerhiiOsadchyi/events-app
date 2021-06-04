@@ -23,7 +23,7 @@ const web3 = new Web3(ganache.provider());*/
 const TicketsFactory = require('../../ABIs/TicketsFactory.json');
 const EventFactory = require('../../ABIs/EventFactory.json');
 
-const contractAddress = '0x41E9bc777248A4f047dE00A29d818E1D257CeB37';
+const contractAddress = '0x9865e06db8575b313538202899c4d614dca4ed12';
 
 export const ownerAddress = '0x579a7303065e83B7c2999d6c8FB9a64272d68275';
 
@@ -33,7 +33,6 @@ const eventMethods = eventProductionContract.methods;
 export const eventsAPI = {
 
     auth() {
-        debugger
         if (web3.eth) {
             return web3.eth.requestAccounts().then(response => {
                 return response
@@ -57,7 +56,6 @@ export const eventsAPI = {
     },
 
     getEventsList() {
-        debugger
         if (window.ethereum) {
             return eventMethods.eventsList().call()
         } else return 'Error connect to MetaMask'
@@ -68,50 +66,30 @@ export const eventsAPI = {
         return eventMethods.closeEvent(eventId).send({from: userAddress})
     },
 
-    sellTicketAPI(userAddress, eventFactoryAddress, ticketsPrice) {
-        const ticketsMethods = new web3.eth.Contract(TicketsFactory.abi, eventFactoryAddress).methods;
-        ticketsMethods.sellTicket().send({from: userAddress, value: ticketsPrice})
+    sellTicketAPI(userAddress, ticketsContractAddress, ticketsPrice) {
+        const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
+        return ticketsContract.methods.sellTicket().send({from: userAddress, value: ticketsPrice})
             .on('transactionHash', function (hash) {
                 console.log('hash');
                 //alert('hash');
                 console.log(hash);
-                // alert(hash)
+               // return 'hash'
             })
+            .on('error', function (error, receipt) {
+                console.log('error')
+                //return `Transaction ${receipt} error`
+            })
+            .then(response => {
+                debugger
+                return response.events.NewTicketCreated.returnValues.ticketId
+            })
+    },
+    getTicketsAPI(ticketsContractAddress) {
+        const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
+        return ticketsContract.methods.ticketsList().call()
+    },
+    /*subscribeEventsAPI() {
 
-    /*   debugger
-        const transferedEth = await ticketsMethods.transferEth().send({from: userAddress, value: ticketsPrice});
-        console.log('transferedEth ' + transferedEth);*/
-
-      /*  debugger
-        const ticketId = await ticketsMethods.addTicket();
-        console.log('ticketId ' + ticketId);
-
-        debugger
-        const mintedTicketId = await ticketsMethods.mintTicket();
-        console.log('mintedTicketId ' + mintedTicketId);
-
-        debugger
-        const tickets = await ticketsMethods.ticketsList();
-        console.log('tickets ' + tickets);
-*/
-
-
-        /* .on('confirmation', function (confirmationNumber, receipt) {
-             console.log('confirmationNumber');
-             alert('confirmationNumber');
-             console.log(confirmationNumber);
-             alert(confirmationNumber);
-             console.log('receipt');
-             alert('receipt');
-             console.log(receipt);
-             alert(receipt)
-         })
-         .on('receipt', function (receipt) {
-             // receipt example
-             console.log(receipt);
-             alert(receipt)
-         })*/
-        // })
     }
-
+    web3.eth.subscribe(type [, options] [, callback]);*/
 }

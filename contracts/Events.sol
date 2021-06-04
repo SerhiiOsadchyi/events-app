@@ -17,7 +17,7 @@ contract EventsFactory {
 
     struct Event {
         uint eventID;
-        address eventFactoryAddress;
+        address ticketsContractAddress;
         string name;
         string description;
         string location;
@@ -59,9 +59,8 @@ contract EventsFactory {
     ) public onlyOwner {
         _eventsID.increment();
         uint eventID = _eventsID.current();
-        address eventFactoryAddress = address(this);
 
-        TicketsFactory _ticketsContract = new TicketsFactory(owner, eventFactoryAddress, eventID, _name,
+        TicketsFactory _ticketsContract = new TicketsFactory(owner, eventID, _name,
             _ticketsPrice, _ticketsTotal);
 
         ticketsContracts[eventID] =  _ticketsContract;

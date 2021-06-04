@@ -23,7 +23,7 @@ const authReducer = (state = initialState, action) => {
 }
 
 export const actions = {
-    login: (account, isOwner, ownerAddress) => ({type: LOGIN, payload: {account, isOwner} }),
+    login: (account, isOwner) => ({type: LOGIN, payload: {account, isOwner} }),
 }
 
 export const setAccount = () => async (dispatch) => {
@@ -39,8 +39,8 @@ export const setAccount = () => async (dispatch) => {
     if(account === ownerAddress){
         isOwner = true
     }
-
-    dispatch(actions.login(account, isOwner, ownerAddress))
+//debugger
+    dispatch(actions.login(account, isOwner))
 }
 
 export default authReducer;

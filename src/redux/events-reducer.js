@@ -3,20 +3,22 @@ import {eventsAPI} from "../components/API/events-api";
 const ADD_NEW_EVENT = 'events-reducer/ADD-NEW-EVENT';
 const CLOSE_EVENT = 'events-reducer/CLOSE_EVENT';
 const WAITING_FOR_ADD_EVENT = 'events-reducer/WAITING_FOR_ADD_EVENT';
-const BUY_TICKET = 'events-reducer/BUY_TICKET';
-const TICKET_SOLD_CONFIRMED = 'events-reducer/TICKET_SOLD_CONFIRMED';
+const WAITING_FOR_TICKET_SOLD = 'events-reducer/WAITING_FOR_TICKET_SOLD';
+const TICKET_SOLD = 'events-reducer/TICKET_SOLD_CONFIRMED';
+const UPDATE_TICKETS = 'events-reducer/UPDATE_TICKETS';
 
 const initialState = {
     events: {},
-    tickets: {},
+    tickets: [],
     isEventAdded: true,
     isTransactionConfirmed: true
 }
 
 const eventsReducer = (state = initialState, action) => {
-    debugger
+
     switch (action.type) {
         case WAITING_FOR_ADD_EVENT:
+            debugger
             return {
                 ...state,
                 isEventAdded: action.flag
@@ -32,12 +34,32 @@ const eventsReducer = (state = initialState, action) => {
                 ...state,
                 events: [state.events.filter(id => id !== action.eventId)]
             };
-        case TICKET_SOLD_CONFIRMED:
+        case WAITING_FOR_TICKET_SOLD:
             return {
                 ...state,
-                isTransactionConfirmed: action.flag
+                isEventAdded: action.flag
             };
-
+        /*case TICKET_SOLD:
+            return {
+                ...state,
+                tickets: action.tickets
+            };*/
+        case UPDATE_TICKETS:
+            const ticketsArr = [];
+            for (let i = 0; i < action.tickets.length; i++) {
+                const ticket = {
+                    ticketId: action.tickets[i].id,
+                    eventId: action.tickets[i].eventId,
+                    eventName: action.tickets[i].eventName,
+                    ticketPrice: action.tickets[i].ticketPrice,
+                    ticketOwner: action.tickets[i].ticketOwner
+                }
+                ticketsArr.push(ticket)
+            }
+            return {
+                ...state,
+                tickets: [...state.tickets, ...ticketsArr]
+            };
 
         default:
             return state;
@@ -47,7 +69,9 @@ const eventsReducer = (state = initialState, action) => {
 export const actions = {
     eventCreationFinished: (flag) => ({type: WAITING_FOR_ADD_EVENT, flag}),
     updateEventsList: (events) => ({type: ADD_NEW_EVENT, events}),
-    ticketSoldConfirmed: (flag) => ({type: TICKET_SOLD_CONFIRMED, flag}),
+    ticketSoldConfirmed: (flag) => ({type: WAITING_FOR_TICKET_SOLD, flag}),
+    //ticketSold: (tickets) => ({type: TICKET_SOLD, tickets}),
+    updateTickets: (tickets) => ({ type: UPDATE_TICKETS, tickets }),
     //closeEvent: (eventId) => ({type: CLOSE_EVENT, eventId})
 }
 
@@ -60,7 +84,6 @@ export const addNewEvent = (value, userAddress) => async (dispatch) => {
 };
 
 export const getEvents = () => async (dispatch) => {
-    debugger
     const data = await eventsAPI.getEventsList();
     if (data !== 'Error connect to MetaMask') {
         dispatch(actions.updateEventsList(data));
@@ -72,10 +95,16 @@ export const closeEventAC = (eventID, userAddress) => async (dispatch) => {
     dispatch(getEvents())
 };
 
-export const sellTicketAC = (userAddress, eventFactoryAddress, ticketsPrice) => async (dispatch) => {
+export const sellTicketAC = (userAddress, ticketsContractAddress, eventID, ticketsPrice) => async (dispatch) => {
     dispatch(actions.ticketSoldConfirmed(false));
-    await eventsAPI.sellTicketAPI(userAddress, eventFactoryAddress, ticketsPrice);
+    await eventsAPI.sellTicketAPI(userAddress, ticketsContractAddress, ticketsPrice);
+    getTickets(ticketsContractAddress, eventID);
     dispatch(actions.ticketSoldConfirmed(true));
+};
+
+export const getTickets = (ticketsContractAddress, eventID) => async (dispatch) => {
+    const tickets = await eventsAPI.getTicketsAPI(ticketsContractAddress);
+    dispatch(actions.updateTickets(tickets));
 };
 
 export default eventsReducer;

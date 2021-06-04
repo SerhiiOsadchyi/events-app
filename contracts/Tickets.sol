@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.6.2 <0.9.0;
-pragma experimental ABIEncoderV2;
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+
+pragma solidity >=0.6.2 <0.9.0;
+pragma experimental ABIEncoderV2;
 
 contract TicketsFactory is ERC721 {
 
@@ -15,12 +15,11 @@ contract TicketsFactory is ERC721 {
     event TicketsNotAvailable(uint indexed eventId);
 
     address payable public owner;
-    address public eventFactoryAddress;
     uint public price;
     uint public ticketsTotal;
     uint public eventId;
     string public eventName;
-    bool public isTicketsAvailable = true;
+    bool public isTicketsAvailable;
     string public ticketSymbol = "T";
 
     struct Ticket {
@@ -39,7 +38,6 @@ contract TicketsFactory is ERC721 {
 
     constructor(
         address payable _owner,
-        address _eventFactoryAddress,
         uint _eventId,
         string memory _eventName,
         uint _price,
@@ -47,10 +45,10 @@ contract TicketsFactory is ERC721 {
     ) public ERC721(_eventName, ticketSymbol) {
         owner = _owner;
         eventName = _eventName;
-        eventFactoryAddress = _eventFactoryAddress;
         eventId = _eventId;
         price = _price;
         ticketsTotal = _ticketsTotal;
+        isTicketsAvailable = true;
     }
 
     modifier onlyOwner() {
@@ -59,7 +57,7 @@ contract TicketsFactory is ERC721 {
     }
 
     modifier checkIsPaymentEnough() {
-        require(msg.value == price, "Payment is not enough for buy the ticket");
+        require(msg.value >= price, "Payment is not enough for buy the ticket");
         _;
     }
 
@@ -68,7 +66,7 @@ contract TicketsFactory is ERC721 {
         _;
     }
 
-    function sellTicket() public payable returns (uint256) {
+    function sellTicket() public payable checkIsPaymentEnough checkTicketsAvailable returns (uint256) {
 
          _tokenIds.increment();
          owner.transfer(msg.value);
@@ -95,72 +93,11 @@ contract TicketsFactory is ERC721 {
         safeTransferFrom(ticketOwner, _newOwnerAddress, tickets[_id].id);
     }
 
+    function ticketsList() public view returns (Ticket[] memory){
+        return tickets;
+    }
+
 }
-
-/*
-        for(uint256 i = 1; i <= totalSupply; i++){
-            _tokenIds.increment();
-            uint256 ticketId = _tokenIds.current();
-            _mint(owner, ticketId);
-            Ticket memory ticket = Ticket(ticketId, eventId, eventName, price, msg.sender);
-            tickets.push(ticket);
-        }
-*/
-
-/*    function sellTicket() public payable returns (uint256) {
-        _ticketOwner = tickets[ticketId].ticketOwner;
-        _ticketOwner.transfer(msg.value);
-
-        changeTicketOwner(ticketId, msg.sender);
-
-        ticketId++;
-
-        if(ticketId == totalSupply) {
-            isTicketsAvailable = false;
-            emit TicketsNotAvailable(eventId);
-        }
-
-        return ticketId;
-    }*/
-
-
-
-/*
-        for(uint256 i = 1; i<= totalSupply; i++){
-            _tokenIds.increment();
-            uint256 ticketId = _tokenIds.current();
-            _mint(owner, ticketId);
-        }*/
-
-/*    function transferEth() public payable returns (uint256) {
-        owner.transfer(msg.value);
-        return msg.value;
-    }
-
-    function addTicket() public returns (uint256) {
-        _ticketsId.increment();
-        ticketId = _ticketsId.current();
-        Ticket memory newTicket = Ticket(ticketId, eventId, eventName, msg.sender);
-        tickets.push(newTicket);
-
-        if(ticketId == ticketsTotal) {
-            isTicketsAvailable = false;
-            emit TicketsNotAvailable(eventId);
-        }
-
-        return ticketId;
-    }
-
-    function mintTicket() public payable returns (uint256) {
-        _mint(msg.sender, ticketId);
-        emit NewTicketCreated(ticketId, msg.sender);
-        return ticketId;
-    }
-
-    function ticketsList() public view returns (uint){
-        return tickets.length;
-    }*/
-
 
 /*
 USE CASE / USER STORIES

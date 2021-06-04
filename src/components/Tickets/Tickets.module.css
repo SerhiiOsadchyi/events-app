@@ -1,0 +1,44 @@
+.content {
+
+}
+
+.antTable {
+    max-width: 800px;
+    text-align: center;
+    margin: auto;
+}
+
+table {
+    max-width: 6200px;
+}
+
+button {
+    margin: auto;
+    cursor: auto;
+    padding-top: 100px;
+    padding-left: 15px;
+}
+
+.visibility {
+    display: none;
+}
+
+.buttonMyTicket {
+    text-align: center;
+}
+
+/*Button {
+    margin-left: 15px;
+    padding-left: 15px;
+}*/
+
+h2 {
+    margin-right: 100px;
+}
+
+.buttonMyTicket Button, .button {
+    padding: 0 10px 20px 10px;
+    margin: 8px 30px 5px 10px;
+    cursor: auto;
+}
+

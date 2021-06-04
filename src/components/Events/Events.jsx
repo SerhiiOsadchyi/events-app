@@ -8,18 +8,18 @@ import {useDispatch, useSelector} from "react-redux";
 import {getEvents} from "../../redux/events-reducer";
 import Preloader from "../common/Preloader/Preloader";
 
-const Events = React.memo(() => {
+const Events = React.memo((userAddress) => {
 
-    const stateView = useSelector(state => state.eventsPage);
-    const userAddress = useSelector(state => state.userAuthorize.authAccount);
+//    const stateView = useSelector(state => state.eventsPage);
+    //const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner =  useSelector(state => state.userAuthorize.isOwner);
     const events = useSelector(state => state.eventsPage.events);
     const isEventAdded = useSelector(state => state.eventsPage.isEventAdded);
 
     const [newEventMode, setNewEventMode] = useState(false);
 
-debugger
-    console.log(stateView)
+//debugger
+//    console.log(stateView)
 
     const dispatch = useDispatch();
 
@@ -61,12 +61,12 @@ debugger
                 : ''
             }
 
-            <Divider><h1>List of Events</h1></Divider>
+            <Divider orientation="left" plain><h1>List of Events</h1></Divider>
             {events.length > 0 ?
                 <div className={s.formContent}>
                     {events.map((event) => {
                         if (!event.isLocked) {
-                            return <div><Event event={event} key={event.eventID}/></div>
+                            return <div><Event event={event} key={event.eventID} userAddress={userAddress} /></div>
                         }
                         return null
                     })}

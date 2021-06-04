@@ -1,31 +1,40 @@
 import React from 'react';
-//import './App.css';
+import s from './App.css';
 import HeaderApp from "./components/Header/HeaderApp";
 import Events from "./components/Events/Events";
 import {Layout} from 'antd';
+import Tickets from "./components/Tickets/Tickets";
+import {useSelector} from "react-redux";
 
 const {Header, Content, Footer} = Layout;
 
-class App extends React.Component {
+const App = () => {
 
-    render() {
+    const userAddress = useSelector(state => state.userAuthorize.authAccount);
+debugger
+    return (
+        <Layout className="layout">
 
-        return (
-            <Layout className="layout">
-                <Header className="header">
-                    <HeaderApp/>
+            <Header className={s.headerApp}>
+                <HeaderApp/>
+            </Header>
 
-                </Header>
-                <Content style={{padding: '0 50px'}}>
+            <Content style={{padding: '0 50px'}}>
+                <div className="site-layout-content">
+                    {userAddress ?
+                        <>
+                            <Tickets userAddress/>
+                            <Events userAddress/>
+                        </>
+                        : <Events/>
+                    }
+                </div>
+            </Content>
 
-                    <div className="site-layout-content">
-                        <Events/>
-                    </div>
-                </Content>
-                <Footer style={{textAlign: 'center'}}>SergeO ©2021 Created by SergeO</Footer>
-            </Layout>
-        );
-    }
+            <Footer style={{textAlign: 'center'}}>SergeO ©2021 Created by SergeO</Footer>
+
+        </Layout>
+    );
 }
 
 export default App;

@@ -1,18 +1,21 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Divider} from "antd";
 import s from './Event.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {sellTicketAC, closeEventAC} from "../../../redux/events-reducer";
+import {sellTicketAC, closeEventAC, getEvents, getTickets} from "../../../redux/events-reducer";
 import Preloader from "../../common/Preloader/Preloader";
 
-const Event = React.memo(({event}) => {
+const Event = React.memo(({event, userAddress}) => {
 
     const dispatch = useDispatch();
-    const userAddress = useSelector(state => state.userAuthorize.authAccount);
+    //const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner = useSelector(state => state.userAuthorize.isOwner);
     const tickets = useSelector(state => state.eventsPage.tickets);
     const isTransactionConfirmed = useSelector(state => state.eventsPage.isTransactionConfirmed);
 
+    useEffect( () => {
+        dispatch(getTickets(event.ticketsContractAddress, event.eventID))
+    },[]);
 
     const [isClose, setIsClose] = useState(event.isLocked);
     const [isTransactionSent, setTransactionStatus] = useState(false);
@@ -23,7 +26,6 @@ const Event = React.memo(({event}) => {
     }
 
     const convertMillisecondsToDate = (date) => {
-        debugger
         let d = new Date(Number(date));
         return d.toDateString();
     }
@@ -35,7 +37,7 @@ const Event = React.memo(({event}) => {
     }
 
     const buyTicket = () => {
-        dispatch(sellTicketAC(userAddress, event.eventFactoryAddress, event.ticketsPrice));
+        dispatch(sellTicketAC(userAddress, event.ticketsContractAddress, event.eventID, event.ticketsPrice));
         setTransactionStatus(true)
     }
 
