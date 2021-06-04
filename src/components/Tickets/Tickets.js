@@ -13,17 +13,17 @@ const Tickets = React.memo(() => {
     debugger
     console.log(tickets)
 
-    const [isTableVisible, setTableVisible] = useState(true);
+    const [isTableVisible, setTableVisible] = useState(false);
 
     const hideTable = (e) => {
         setTableVisible(e);
     }
 
-    //const dispatch = useDispatch();
+   /* const dispatch = useDispatch();
 
     //ticketId, eventId, eventName, price, msg.sender
 
-    /* useEffect(() => {
+    useEffect(() => {
          dispatch(getTickets())
      }, []);*/
 

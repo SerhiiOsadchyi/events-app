@@ -13,6 +13,7 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
 
     const dateFormat = 'YYYY/MM/DD';
     const dispatch = useDispatch();
+    debugger
 
     const validatorValue = (errorField, value) => {
         let error;
@@ -156,7 +157,7 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
                         </div>
 
                         <div>
-                            <button className="ant-btn ant-btn-primary" type="submit" disabled={isSubmitting}>Submit
+                            <button className={`ant-btn ant-btn-primary ${s.submitButton}`} type="submit" disabled={isSubmitting}>Submit
                             </button>
                         </div>
                     </FormikForm>

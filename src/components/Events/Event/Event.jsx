@@ -4,6 +4,7 @@ import s from './Event.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {sellTicketAC, closeEventAC, getEvents, getTickets} from "../../../redux/events-reducer";
 import Preloader from "../../common/Preloader/Preloader";
+import {eventsAPI, TicketsFactory, web3} from "../../API/events-api";
 
 const Event = React.memo(({event, userAddress}) => {
 
@@ -11,10 +12,15 @@ const Event = React.memo(({event, userAddress}) => {
     //const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner = useSelector(state => state.userAuthorize.isOwner);
     const tickets = useSelector(state => state.eventsPage.tickets);
+    const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, event.ticketsContractAddress);
     const isTransactionConfirmed = useSelector(state => state.eventsPage.isTransactionConfirmed);
 
     useEffect( () => {
-        dispatch(getTickets(event.ticketsContractAddress, event.eventID))
+        dispatch(getTickets(event.ticketsContractAddress, event.eventID));
+        ticketsContract.events.NewTicketCreated()
+            .on('data', function(event){
+                console.log(event); // same results as the optional callback above
+            });
     },[]);
 
     const [isClose, setIsClose] = useState(event.isLocked);

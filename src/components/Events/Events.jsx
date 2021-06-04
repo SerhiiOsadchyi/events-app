@@ -7,39 +7,48 @@ import {NewEvent} from "./Event/NewEvent";
 import {useDispatch, useSelector} from "react-redux";
 import {getEvents} from "../../redux/events-reducer";
 import Preloader from "../common/Preloader/Preloader";
+import {eventProductionContract} from "../API/events-api";
 
-const Events = React.memo((userAddress) => {
+const Events = React.memo(({userAddress}) => {
 
-//    const stateView = useSelector(state => state.eventsPage);
-    //const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner =  useSelector(state => state.userAuthorize.isOwner);
     const events = useSelector(state => state.eventsPage.events);
-    const isEventAdded = useSelector(state => state.eventsPage.isEventAdded);
 
+    //open and close table "Add new event"
     const [newEventMode, setNewEventMode] = useState(false);
-
-//debugger
-//    console.log(stateView)
+    //open and close spinner while event response received from MetaMask
+    const [isEventAdded, setEventEndWaiting] = useState(true);
 
     const dispatch = useDispatch();
 
     useEffect( () => {
-        dispatch(getEvents())
+        dispatch(getEvents());
+
+        //addEventListener web3 for new Event
+        eventProductionContract.events.NewEventAdded()
+            .on('data', function(event){
+                dispatch(getEvents());
+                setEventEndWaiting(true)
+                console.log('event');
+                console.log(event); // same results as the optional callback above
+            });
     },[]);
 
     const addEvent = () => {
         setNewEventMode(true)
     }
 
+    //close Add new event table
     const closeNewEventMode = () => {
-        setNewEventMode(false)
+        setNewEventMode(false);
+        setEventEndWaiting(false)
     }
 
     return (
         <div className={s.content}>
+            <Divider orientation="left" plain><h1>List of Events</h1></Divider>
             {isOwner ?
                 <div>
-
                     {isEventAdded ?
                         newEventMode ?
                             <NewEvent
@@ -52,16 +61,15 @@ const Events = React.memo((userAddress) => {
                         : <>
                             <h3> Please, waiting for confirm transaction by MetaMask </h3>
                             <div className={s.preloader}>
-                                <Preloader />
+                                <Preloader/>
                             </div>
-                          </>
+                        </>
                     }
 
                 </div>
                 : ''
             }
 
-            <Divider orientation="left" plain><h1>List of Events</h1></Divider>
             {events.length > 0 ?
                 <div className={s.formContent}>
                     {events.map((event) => {

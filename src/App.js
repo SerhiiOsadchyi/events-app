@@ -23,8 +23,8 @@ debugger
                 <div className="site-layout-content">
                     {userAddress ?
                         <>
-                            <Tickets userAddress/>
-                            <Events userAddress/>
+                            <Tickets userAddress={userAddress} />
+                            <Events userAddress={userAddress} />
                         </>
                         : <Events/>
                     }

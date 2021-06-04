@@ -51,6 +51,10 @@ button {
    display: block;
 }
 
+.submitButton {
+   margin-left: 210px;
+}
+
 .addEvent button {
    margin: 0 auto;
    display: block;

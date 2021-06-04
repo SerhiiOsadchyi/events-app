@@ -2,7 +2,6 @@ import {eventsAPI} from "../components/API/events-api";
 
 const ADD_NEW_EVENT = 'events-reducer/ADD-NEW-EVENT';
 const CLOSE_EVENT = 'events-reducer/CLOSE_EVENT';
-const WAITING_FOR_ADD_EVENT = 'events-reducer/WAITING_FOR_ADD_EVENT';
 const WAITING_FOR_TICKET_SOLD = 'events-reducer/WAITING_FOR_TICKET_SOLD';
 const TICKET_SOLD = 'events-reducer/TICKET_SOLD_CONFIRMED';
 const UPDATE_TICKETS = 'events-reducer/UPDATE_TICKETS';
@@ -10,20 +9,12 @@ const UPDATE_TICKETS = 'events-reducer/UPDATE_TICKETS';
 const initialState = {
     events: {},
     tickets: [],
-    isEventAdded: true,
     isTransactionConfirmed: true
 }
 
 const eventsReducer = (state = initialState, action) => {
 
     switch (action.type) {
-        case WAITING_FOR_ADD_EVENT:
-            debugger
-            return {
-                ...state,
-                isEventAdded: action.flag
-
-            };
         case ADD_NEW_EVENT:
             return {
                 ...state,
@@ -34,11 +25,11 @@ const eventsReducer = (state = initialState, action) => {
                 ...state,
                 events: [state.events.filter(id => id !== action.eventId)]
             };
-        case WAITING_FOR_TICKET_SOLD:
+       /* case WAITING_FOR_TICKET_SOLD:
             return {
                 ...state,
                 isEventAdded: action.flag
-            };
+            };*/
         /*case TICKET_SOLD:
             return {
                 ...state,
@@ -67,7 +58,6 @@ const eventsReducer = (state = initialState, action) => {
 }
 
 export const actions = {
-    eventCreationFinished: (flag) => ({type: WAITING_FOR_ADD_EVENT, flag}),
     updateEventsList: (events) => ({type: ADD_NEW_EVENT, events}),
     ticketSoldConfirmed: (flag) => ({type: WAITING_FOR_TICKET_SOLD, flag}),
     //ticketSold: (tickets) => ({type: TICKET_SOLD, tickets}),
@@ -76,11 +66,7 @@ export const actions = {
 }
 
 export const addNewEvent = (value, userAddress) => async (dispatch) => {
-    dispatch(actions.eventCreationFinished(false));
     await eventsAPI.addNewEvent(value, userAddress);
-    const data = await eventsAPI.getEventsList();
-    dispatch(actions.updateEventsList(data));
-    dispatch(actions.eventCreationFinished(true))
 };
 
 export const getEvents = () => async (dispatch) => {

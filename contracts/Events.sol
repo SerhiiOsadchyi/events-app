@@ -52,8 +52,8 @@ contract EventsFactory {
         string memory _description,
         string memory _location,
         string memory _imageURL,
-        uint _ticketsTotal,
         uint _ticketsPrice,
+        uint _ticketsTotal,
         uint _startDate,
         uint _endDate
     ) public onlyOwner {
