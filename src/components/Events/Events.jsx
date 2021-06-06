@@ -7,12 +7,13 @@ import {NewEvent} from "./Event/NewEvent";
 import {useDispatch, useSelector} from "react-redux";
 import {getEvents} from "../../redux/events-reducer";
 import Preloader from "../common/Preloader/Preloader";
-import {eventFactoryContract} from "../API/events-api";
+import {contractAddress, EventFactory, web3} from "../API/events-api";
 
 const Events = React.memo(({userAddress}) => {
 
     const isOwner =  useSelector(state => state.userAuthorize.isOwner);
     const events = useSelector(state => state.eventsPage.events);
+    const eventFactoryContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
 
     //open and close table "Add new event"
     const [newEventMode, setNewEventMode] = useState(false);
@@ -26,11 +27,9 @@ const Events = React.memo(({userAddress}) => {
 
         //addEventListener web3 for new Event
         eventFactoryContract.events.NewEventAdded()
-            .on('data', function(event){
+            .on('data', function(e){
                 dispatch(getEvents());
                 setEventEndWaiting(true)
-                console.log('event');
-                console.log(event); // same results as the optional callback above
             });
     },[]);
 

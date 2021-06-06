@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {getTickets} from "../../redux/events-reducer";
-import {Input, Row, Col, Space, Switch, Button, Table, Divider} from "antd";
+import React, {useState} from 'react';
+import {useSelector} from "react-redux";
+import {Button, Col, Divider, Input, Row, Switch, Table} from "antd";
 import s from './Tickets.module.css'
 
 const Tickets = React.memo(() => {
@@ -10,14 +9,13 @@ const Tickets = React.memo(() => {
     const events = useSelector(state => state.eventsPage.events);
     const tickets = useSelector(state => state.eventsPage.tickets);
 
-    //debugger
     console.log(tickets);
 
     const closedEventId = events.filter(item => item.isLocked === true);
 
-    // Remove tickets from closed events
-    let actualTickets = [];
+        let actualTickets = [];
 
+    // Remove tickets from closed events
     if (closedEventId.length === 0) {
         actualTickets = tickets
     } else {
@@ -26,7 +24,6 @@ const Tickets = React.memo(() => {
         }
     }
 
-
     const [isTableVisible, setTableVisible] = useState(false);
 
     const hideTable = (e) => {
@@ -34,7 +31,8 @@ const Tickets = React.memo(() => {
     }
 
     let ticketsForUserArray = [];
-debugger
+
+    //choice tickets from user only and sort these by event name
     if (actualTickets.length > 0) {
         for (let i = 0; i < actualTickets.length; i++) {
             if (actualTickets[i].ticketOwner === userAddress) {
@@ -60,6 +58,7 @@ debugger
         console.log('send')
     }
 
+    // data for antD table
     const columns = [
         {
             title: 'Event Name',
@@ -85,9 +84,7 @@ debugger
             dataIndex: 'ticketOwner',
             key: 'ticketOwner',
             render: () => (
-                // <Space size="middle">
                 <Input placeholder="Insert new owner address"/>
-                // </Space>
             ),
         },
         {
@@ -97,9 +94,7 @@ debugger
             dataIndex: 'button',
             key: 'button',
             render: () => (
-                // <Space size="middle">
                 <Button onClick={sendTicket}>Send ticket</Button>
-                // </Space>
             ),
         }
 

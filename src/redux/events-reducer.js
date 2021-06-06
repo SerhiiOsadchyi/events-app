@@ -28,7 +28,6 @@ const eventsReducer = (state = initialState, action) => {
             };
 
         case UPDATE_TICKETS:
-            //debugger
             return {
                 ...state,
                 tickets: [...state.tickets.filter(ticket => ticket.eventId !== action.payload.eventID), ...action.payload.ticketsArray]
@@ -71,11 +70,14 @@ export const updateTicketsAC = (ticketsContractAddress, eventID) => async (dispa
     dispatch(actions.updateTickets(newTickets, eventID));
 };
 
+//convert tickets data to array
 const toArrayTickets = (ticketsData) => {
     let ticketsArr = [];
-    //debugger
+
     for (let i = 0; i < ticketsData.length; i++) {
+        //convert wei to ether
         const ticketsPrice = Web3.utils.fromWei(ticketsData[i].ticketPrice, 'ether');
+
         const ticket = {
             ticketId: ticketsData[i].id,
             eventId: ticketsData[i].eventId,
@@ -83,8 +85,10 @@ const toArrayTickets = (ticketsData) => {
             ticketPrice: ticketsPrice,
             ticketOwner: ticketsData[i].ticketOwner
         }
+
         ticketsArr.push(ticket)
     }
+
     return ticketsArr
 }
 

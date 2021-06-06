@@ -2,14 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {Button, Divider} from "antd";
 import s from './Event.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {
-    sellTicketAC,
-    closeEventAC,
-    getTicketsAC,
-    updateTicketsAC
-} from "../../../redux/events-reducer";
+import {closeEventAC, sellTicketAC, updateTicketsAC} from "../../../redux/events-reducer";
 import Preloader from "../../common/Preloader/Preloader";
-import {eventsAPI, TicketsFactory, web3} from "../../API/events-api";
+import {TicketsFactory, web3} from "../../API/events-api";
 import Web3 from "web3";
 
 const Event = React.memo(({event, userAddress}) => {
@@ -31,18 +26,18 @@ const Event = React.memo(({event, userAddress}) => {
     const [isClose, setIsClose] = useState(event.isLocked);
     const [isTransactionSent, setTransactionStatus] = useState(false);
 
+
     let ticketsRest = event.ticketsTotal;
-    let ticketsEvent = tickets.filter(ticket => ticket.eventId === event.eventID)
+    let ticketsEvent = tickets.filter(ticket => ticket.eventId === event.eventID);
 
     // If tickets for this event exist, calculate tickets rest
-    if (tickets[event.eventID]) {
-        //debugger
-        ticketsRest = +event.ticketsTotal - ticketsEvent.length;
+    if (ticketsEvent.length > 0) {
+        ticketsRest = ticketsRest - ticketsEvent.length;
     }
 
     const convertMillisecondsToDate = (date) => {
         let d = new Date(Number(date));
-        return d.toDateString();
+        return d.toString();
     }
 
     console.log(event.isLocked);
@@ -80,7 +75,7 @@ const Event = React.memo(({event, userAddress}) => {
                         <div> {ticketsRest}</div>
                     </div>
                     <div className={s.item}>
-                        <div> Ticket price, Ether:</div>
+                        <div> Ticket price, ether:</div>
                         <div> {ticketsPrice}</div>
                     </div>
                     <div className={s.item}>

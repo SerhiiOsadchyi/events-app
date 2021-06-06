@@ -39,7 +39,7 @@ export const setAccount = () => async (dispatch) => {
     if(account === ownerAddress){
         isOwner = true
     }
-//debugger
+
     dispatch(actions.login(account, isOwner))
 }
 

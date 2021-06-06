@@ -12,7 +12,6 @@ const { RangePicker } = DatePicker;
 
 export const NewEvent = ({closeNewEventMode, userAddress}) => {
 
-    const dateFormat = 'YYYY/MM/DD';
     const dispatch = useDispatch();
     debugger
 
@@ -29,7 +28,6 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         if (!value) {
             error = errorField;
         } else if (!Number.isInteger(value) ) {
-            //debugger
             error = 'Please, insert integer';
         }
         return error;
@@ -40,7 +38,6 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         if (!value) {
             error = errorField;
         } else if (!Number(value) ) {
-            //debugger
             error = 'Please, insert number';
         }
         return error;
@@ -72,9 +69,6 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         return error;
     }
 
-    //const weiValue = Web3.utils.toWei('1', 'ether');
-    //const etherValue = Web3.utils.fromWei('1000000000000000000', 'ether');
-
     return (
         <>
             <Divider>Add new event</Divider>
@@ -84,9 +78,8 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
                 }}
 
                 onSubmit={(values, {setSubmitting},) => {
-                    values.startDate = Date.parse(moment(values.rangeDate[0]).format('YYYY-MM-DD'));
-                    values.endDate = Date.parse(moment(values.rangeDate[1]).format('YYYY-MM-DD'));
-                   // debugger
+                    values.startDate = Date.parse(values.rangeDate[0]);
+                    values.endDate = Date.parse(values.rangeDate[1]);
                     values.price = Web3.utils.toWei(values.price.toString(), 'ether');
                     dispatch(addNewEvent(values, userAddress));
                     closeNewEventMode();
@@ -167,7 +160,12 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
                                 <label htmlFor="rangeDate">Event's duration</label>
                             </div>
                             <div>
-                                <RangePicker name="rangeDate" validate={rangeDateValidate} format={dateFormat} />
+                                <RangePicker name="rangeDate" validate={rangeDateValidate}
+                                             showTime={{
+                                    hideDisabledOptions: true,
+                                    defaultValue: [moment('09:00:00', 'HH:mm:ss'),
+                                                moment('18:59:59', 'HH:mm:ss')],
+                                }} />
                                 {errors.rangeDate && touched.rangeDate &&
                                 <div className={s.error}>{errors.rangeDate}</div>}
                             </div>
@@ -183,63 +181,3 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         </>
     )
 };
-
-
-/* const eventNameValidate = (value) => {
-        let error;
-        if (!value) {
-            error = 'Please, add name for this event';
-        }
-        return error;
-    }*/
-
-/*const descriptionValidate = (value) => {
-    debugger
-    let error;
-    if (!value) {
-        error = 'Please, fill description of this event';
-    }
-    return error;
-}*/
-
-/*const locationValidate = (value) => {
-    let error;
-    if (!value) {
-        error = 'Please, give me location of this event';
-    }
-    return error;
-}*/
-
-/*const imageValidate = (value) => {
-    let error;
-    if (!value) {
-        error = 'Please, insert url of a poster for this event';
-    }
-    return error;
-}*/
-
-/*const amountValidate = (value) => {
-    let error;
-    if (!value) {
-        error = 'Please, give me total supply tickets for this event';
-    }
-    return error;
-}*/
-
-/* const priceValidate = (value) => {
-     let error;
-     if (!value) {
-         error = 'Please, insert ticket\'s price';
-     }
-     return error;
- }*/
-
-
-/*   const startDateValidate = (value) => {
-       let error;
-       startDateValue = value;
-       if (!value) {
-           error = 'Please, choice a start date of this event';
-       }
-       return error;
-   }*/

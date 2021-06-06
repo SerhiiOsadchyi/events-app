@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import s from './Header.module.css'
 import {Button, Col, Row} from "antd";
 import {useDispatch, useSelector} from "react-redux";
@@ -31,7 +31,7 @@ const HeaderApp = () => {
                                 </Button>
                             </div>
                             : <div>
-                                Your account: <b>{authAccount}</b>
+                                My account: <b>{authAccount}</b>
                             </div>
                         }
                     </div>
