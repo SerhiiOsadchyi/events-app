@@ -7,11 +7,25 @@ import s from './Tickets.module.css'
 const Tickets = React.memo(() => {
 
     const userAddress = useSelector(state => state.userAuthorize.authAccount);
-    //const events = useSelector(state => state.eventsPage.events);
+    const events = useSelector(state => state.eventsPage.events);
     const tickets = useSelector(state => state.eventsPage.tickets);
 
-    debugger
-    console.log(tickets)
+    //debugger
+    console.log(tickets);
+
+    const closedEventId = events.filter(item => item.isLocked === true);
+
+    // Remove tickets from closed events
+    let actualTickets = [];
+
+    if (closedEventId.length === 0) {
+        actualTickets = tickets
+    } else {
+        for (let i = 0;  i < closedEventId.length; i++) {
+            actualTickets = tickets.filter(ticket => ticket.eventId !== closedEventId.eventID)
+        }
+    }
+
 
     const [isTableVisible, setTableVisible] = useState(false);
 
@@ -19,22 +33,27 @@ const Tickets = React.memo(() => {
         setTableVisible(e);
     }
 
-   /* const dispatch = useDispatch();
-
-    //ticketId, eventId, eventName, price, msg.sender
-
-    useEffect(() => {
-         dispatch(getTickets())
-     }, []);*/
-
-    let ticketsArray = [];
-
-    if (tickets.length > 0) {
-        for (let i = 0; i < tickets.length; i++) {
-            if (tickets[i].ticketOwner === userAddress) {
-                ticketsArray.push(tickets[i])
+    let ticketsForUserArray = [];
+debugger
+    if (actualTickets.length > 0) {
+        for (let i = 0; i < actualTickets.length; i++) {
+            if (actualTickets[i].ticketOwner === userAddress) {
+                ticketsForUserArray.push(actualTickets[i])
             }
         }
+        const compareEventId = (a, b) => {
+            const first = a.eventId;
+            const second = b.eventId;
+
+            let result = 0;
+            if (first > second) {
+                result = 1;
+            } else if (first < second) {
+                result = -1;
+            }
+            return result;
+        }
+        tickets.sort(compareEventId)
     }
 
     const sendTicket = () => {
@@ -44,19 +63,19 @@ const Tickets = React.memo(() => {
     const columns = [
         {
             title: 'Event Name',
-            width: 100,
+            width: 200,
             dataIndex: 'eventName',
             key: 'eventName',
         },
         {
-            title: 'Ticket number',
-            width: 100,
+            title: 'Ticket ID',
+            width: 80,
             dataIndex: 'ticketId',
             key: 'ticketId',
         },
         {
-            title: 'Price',
-            width: 100,
+            title: 'Price, ether',
+            width: 200,
             dataIndex: 'ticketPrice',
             key: 'ticketPrice',
         },
@@ -67,13 +86,13 @@ const Tickets = React.memo(() => {
             key: 'ticketOwner',
             render: () => (
                 // <Space size="middle">
-                <Input placeholder="Basic usage"/>
+                <Input placeholder="Insert new owner address"/>
                 // </Space>
             ),
         },
         {
             title: 'Confirmation',
-            width: 100,
+            width: 120,
             float: 'left',
             dataIndex: 'button',
             key: 'button',
@@ -97,7 +116,7 @@ const Tickets = React.memo(() => {
                         </Col>
                         <Col span={12}>
                             <Switch
-                                checkedChildren="See"
+                                checkedChildren="Visible"
                                 unCheckedChildren="Hide"
                                 onChange={(e) => hideTable(e)}/>
                         </Col>
@@ -105,8 +124,8 @@ const Tickets = React.memo(() => {
                 </div>
             </Divider>
 
-            <div className={`${s.antTable} ${!isTableVisible && s.visibility}`}>
-                <Table dataSource={ticketsArray} columns={columns} scroll={{y: 400}}/>
+            <div className={`${s.tableLayout} ${!isTableVisible && s.visibility}`}>
+                <Table dataSource={ticketsForUserArray} columns={columns} scroll={{y: 400}}/>
             </div>
 
         </div>

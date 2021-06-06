@@ -3,10 +3,19 @@
     text-align: center;
 }
 
+h4{
+    text-align: center;
+}
+
 .poster img {
     max-height: 300px;
 }
 
+.ticketsSold h4 {
+    margin: 0 auto;
+    padding-left: 100px;
+    color: chocolate;
+}
 
 .content {
     max-width: 1200px;

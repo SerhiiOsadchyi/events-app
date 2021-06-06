@@ -1,15 +1,16 @@
 .content {
-
-}
-
-.antTable {
-    max-width: 800px;
     text-align: center;
     margin: auto;
 }
 
-table {
-    max-width: 6200px;
+.content table {
+    max-width: 1000px;
+    text-align: center;
+    margin: auto;
+}
+
+.content table th {
+    text-align: center;
 }
 
 button {
@@ -17,6 +18,11 @@ button {
     cursor: auto;
     padding-top: 100px;
     padding-left: 15px;
+}
+
+.tableLayout {
+    max-width: 1000px;
+    margin: auto;
 }
 
 .visibility {

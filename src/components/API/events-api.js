@@ -23,12 +23,12 @@ const web3 = new Web3(ganache.provider());*/
 export const TicketsFactory = require('../../ABIs/TicketsFactory.json');
 const EventFactory = require('../../ABIs/EventFactory.json');
 
-const contractAddress = '0xc09b480c9ae9df29fa027a5939e8d8385f892b81';
+const contractAddress = '0x3160ce5ab67c54a05238c5eeb7d99fc43bda3da5';
 
 export const ownerAddress = '0x579a7303065e83B7c2999d6c8FB9a64272d68275';
 
-export const eventProductionContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
-const eventMethods = eventProductionContract.methods;
+export const eventFactoryContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
+const eventMethods = eventFactoryContract.methods;
 
 export const eventsAPI = {
 
@@ -42,6 +42,7 @@ export const eventsAPI = {
 
     addNewEvent(values, userAddress) {
         if (userAddress) {
+            debugger
             return eventMethods.addEvent(
                 values.eventName,
                 values.description,
@@ -63,7 +64,7 @@ export const eventsAPI = {
     },
 
     closeEventAPI(eventId, userAddress) {
-        return eventMethods.closeEvent(eventId).send({from: userAddress})
+        return eventMethods.closeEvent(+eventId - 1).send({from: userAddress})
     },
 
     sellTicketAPI(userAddress, ticketsContractAddress, ticketsPrice) {
@@ -86,14 +87,6 @@ export const eventsAPI = {
     getTicketsAPI(ticketsContractAddress) {
         const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
         return ticketsContract.methods.ticketsList().call();
-    },
-    subscribeSellTicketsAPI(ticketsContractAddress) {
-        const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
-        debugger
-        return ticketsContract.events.NewTicketCreated()
-            .on('data', function(event){
-            console.log(event); // same results as the optional callback above
-        });
-    },
+    }
 
 }

@@ -66,7 +66,7 @@ contract EventsFactory {
         ticketsContracts[eventID] =  _ticketsContract;
 
         Event memory newEvent = Event(eventID, address(_ticketsContract), _name, _description, _location,
-            _imageURL, _ticketsTotal, _ticketsPrice, _startDate, _endDate, false);
+            _imageURL, _ticketsPrice, _ticketsTotal, _startDate, _endDate, false);
 
         events.push(newEvent);
         emit NewEventAdded(eventID);

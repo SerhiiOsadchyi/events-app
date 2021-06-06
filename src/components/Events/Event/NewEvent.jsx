@@ -6,6 +6,7 @@ import moment from 'moment';
 import React from "react";
 import {useDispatch} from "react-redux";
 import {addNewEvent} from "../../../redux/events-reducer";
+import Web3 from "web3";
 
 const { RangePicker } = DatePicker;
 
@@ -34,6 +35,17 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         return error;
     }
 
+    const validatorValueAndNumber = (errorField, value) => {
+        let error;
+        if (!value) {
+            error = errorField;
+        } else if (!Number(value) ) {
+            //debugger
+            error = 'Please, insert number';
+        }
+        return error;
+    }
+
     const eventNameValidate = (value) => {
         return validatorValue('Please, add name for this event', value)
     }
@@ -49,7 +61,7 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
     }
 
     const priceValidate = (value) => {
-        return validatorValueAndInteger('Please, insert ticket\'s price', value)
+        return validatorValueAndNumber('Please, insert ticket\'s price', value)
     }
 
     const rangeDateValidate = (value) => {
@@ -59,6 +71,9 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
         }
         return error;
     }
+
+    //const weiValue = Web3.utils.toWei('1', 'ether');
+    //const etherValue = Web3.utils.fromWei('1000000000000000000', 'ether');
 
     return (
         <>
@@ -71,6 +86,8 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
                 onSubmit={(values, {setSubmitting},) => {
                     values.startDate = Date.parse(moment(values.rangeDate[0]).format('YYYY-MM-DD'));
                     values.endDate = Date.parse(moment(values.rangeDate[1]).format('YYYY-MM-DD'));
+                   // debugger
+                    values.price = Web3.utils.toWei(values.price.toString(), 'ether');
                     dispatch(addNewEvent(values, userAddress));
                     closeNewEventMode();
                     setTimeout(() => {
@@ -127,7 +144,7 @@ export const NewEvent = ({closeNewEventMode, userAddress}) => {
 
                         <div className={s.field}>
                             <div>
-                                <label htmlFor="price">Ticket price, wei</label>
+                                <label htmlFor="price">Ticket price, Ether</label>
                             </div>
                             <div>
                                 <FormikField type="number" name="price" validate={priceValidate}/>

@@ -1,55 +1,37 @@
 import {eventsAPI} from "../components/API/events-api";
+import Web3 from "web3";
 
 const ADD_NEW_EVENT = 'events-reducer/ADD-NEW-EVENT';
 const CLOSE_EVENT = 'events-reducer/CLOSE_EVENT';
-const WAITING_FOR_TICKET_SOLD = 'events-reducer/WAITING_FOR_TICKET_SOLD';
-const TICKET_SOLD = 'events-reducer/TICKET_SOLD_CONFIRMED';
+const GET_TICKETS = 'events-reducer/GET_TICKETS';
 const UPDATE_TICKETS = 'events-reducer/UPDATE_TICKETS';
 
 const initialState = {
     events: {},
     tickets: [],
-    isTransactionConfirmed: true
 }
 
 const eventsReducer = (state = initialState, action) => {
 
     switch (action.type) {
+
         case ADD_NEW_EVENT:
             return {
                 ...state,
                 events: action.events
             };
+
         case CLOSE_EVENT:
             return {
                 ...state,
                 events: [state.events.filter(id => id !== action.eventId)]
             };
-       /* case WAITING_FOR_TICKET_SOLD:
-            return {
-                ...state,
-                isEventAdded: action.flag
-            };*/
-        /*case TICKET_SOLD:
-            return {
-                ...state,
-                tickets: action.tickets
-            };*/
+
         case UPDATE_TICKETS:
-            const ticketsArr = [];
-            for (let i = 0; i < action.tickets.length; i++) {
-                const ticket = {
-                    ticketId: action.tickets[i].id,
-                    eventId: action.tickets[i].eventId,
-                    eventName: action.tickets[i].eventName,
-                    ticketPrice: action.tickets[i].ticketPrice,
-                    ticketOwner: action.tickets[i].ticketOwner
-                }
-                ticketsArr.push(ticket)
-            }
+            //debugger
             return {
                 ...state,
-                tickets: [...state.tickets, ...ticketsArr]
+                tickets: [...state.tickets.filter(ticket => ticket.eventId !== action.payload.eventID), ...action.payload.ticketsArray]
             };
 
         default:
@@ -59,10 +41,8 @@ const eventsReducer = (state = initialState, action) => {
 
 export const actions = {
     updateEventsList: (events) => ({type: ADD_NEW_EVENT, events}),
-    ticketSoldConfirmed: (flag) => ({type: WAITING_FOR_TICKET_SOLD, flag}),
-    //ticketSold: (tickets) => ({type: TICKET_SOLD, tickets}),
-    updateTickets: (tickets) => ({ type: UPDATE_TICKETS, tickets }),
-    //closeEvent: (eventId) => ({type: CLOSE_EVENT, eventId})
+    getTickets: (ticketsArray, eventID) => ({type: GET_TICKETS, payload: {ticketsArray, eventID}}),
+    updateTickets: (ticketsArray, eventID) => ({type: UPDATE_TICKETS, payload: {ticketsArray, eventID}}),
 }
 
 export const addNewEvent = (value, userAddress) => async (dispatch) => {
@@ -82,15 +62,30 @@ export const closeEventAC = (eventID, userAddress) => async (dispatch) => {
 };
 
 export const sellTicketAC = (userAddress, ticketsContractAddress, eventID, ticketsPrice) => async (dispatch) => {
-    dispatch(actions.ticketSoldConfirmed(false));
     await eventsAPI.sellTicketAPI(userAddress, ticketsContractAddress, ticketsPrice);
-    getTickets(ticketsContractAddress, eventID);
-    dispatch(actions.ticketSoldConfirmed(true));
 };
 
-export const getTickets = (ticketsContractAddress, eventID) => async (dispatch) => {
-    const tickets = await eventsAPI.getTicketsAPI(ticketsContractAddress);
-    dispatch(actions.updateTickets(tickets));
+export const updateTicketsAC = (ticketsContractAddress, eventID) => async (dispatch) => {
+    let newTickets = await eventsAPI.getTicketsAPI(ticketsContractAddress);
+    newTickets = toArrayTickets(newTickets);
+    dispatch(actions.updateTickets(newTickets, eventID));
 };
+
+const toArrayTickets = (ticketsData) => {
+    let ticketsArr = [];
+    //debugger
+    for (let i = 0; i < ticketsData.length; i++) {
+        const ticketsPrice = Web3.utils.fromWei(ticketsData[i].ticketPrice, 'ether');
+        const ticket = {
+            ticketId: ticketsData[i].id,
+            eventId: ticketsData[i].eventId,
+            eventName: ticketsData[i].eventName,
+            ticketPrice: ticketsPrice,
+            ticketOwner: ticketsData[i].ticketOwner
+        }
+        ticketsArr.push(ticket)
+    }
+    return ticketsArr
+}
 
 export default eventsReducer;

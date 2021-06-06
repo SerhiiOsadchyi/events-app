@@ -2,33 +2,42 @@ import React, {useEffect, useState} from 'react';
 import {Button, Divider} from "antd";
 import s from './Event.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {sellTicketAC, closeEventAC, getEvents, getTickets} from "../../../redux/events-reducer";
+import {
+    sellTicketAC,
+    closeEventAC,
+    getTicketsAC,
+    updateTicketsAC
+} from "../../../redux/events-reducer";
 import Preloader from "../../common/Preloader/Preloader";
 import {eventsAPI, TicketsFactory, web3} from "../../API/events-api";
+import Web3 from "web3";
 
 const Event = React.memo(({event, userAddress}) => {
 
     const dispatch = useDispatch();
-    //const userAddress = useSelector(state => state.userAuthorize.authAccount);
     const isOwner = useSelector(state => state.userAuthorize.isOwner);
     const tickets = useSelector(state => state.eventsPage.tickets);
     const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, event.ticketsContractAddress);
-    const isTransactionConfirmed = useSelector(state => state.eventsPage.isTransactionConfirmed);
 
-    useEffect( () => {
-        dispatch(getTickets(event.ticketsContractAddress, event.eventID));
+    useEffect(() => {
+        dispatch(updateTicketsAC(event.ticketsContractAddress, event.eventID));
         ticketsContract.events.NewTicketCreated()
-            .on('data', function(event){
-                console.log(event); // same results as the optional callback above
+            .on('data', function (e) {
+                dispatch(updateTicketsAC(event.ticketsContractAddress, event.eventID));
+                setTransactionStatus(false)
             });
-    },[]);
+    }, []);
 
     const [isClose, setIsClose] = useState(event.isLocked);
     const [isTransactionSent, setTransactionStatus] = useState(false);
 
     let ticketsRest = event.ticketsTotal;
-    if (tickets[event.eventID] && tickets[event.eventID].length) {
-        ticketsRest = event.ticketsTotal - tickets[event.eventID].length;
+    let ticketsEvent = tickets.filter(ticket => ticket.eventId === event.eventID)
+
+    // If tickets for this event exist, calculate tickets rest
+    if (tickets[event.eventID]) {
+        //debugger
+        ticketsRest = +event.ticketsTotal - ticketsEvent.length;
     }
 
     const convertMillisecondsToDate = (date) => {
@@ -47,9 +56,7 @@ const Event = React.memo(({event, userAddress}) => {
         setTransactionStatus(true)
     }
 
-    if(isTransactionConfirmed && isTransactionSent) {
-        setTransactionStatus(false)
-    }
+    const ticketsPrice = Web3.utils.fromWei(event.ticketsPrice, 'ether');
 
     return (
         <div className={s.event}>
@@ -73,8 +80,8 @@ const Event = React.memo(({event, userAddress}) => {
                         <div> {ticketsRest}</div>
                     </div>
                     <div className={s.item}>
-                        <div> Ticket price, wei:</div>
-                        <div> {event.ticketsPrice}</div>
+                        <div> Ticket price, Ether:</div>
+                        <div> {ticketsPrice}</div>
                     </div>
                     <div className={s.item}>
                         <div> Event start date:</div>
@@ -100,16 +107,9 @@ const Event = React.memo(({event, userAddress}) => {
                 <div className={s.payTicket}>
                     {userAddress ?
                         <>
-                            {isTransactionSent ?
-                                    <>
-                                        <Button onClick={buyTicket} disabled> Buy ticket to the event</Button>
-                                        <h4>Please, waiting for confirm this transaction</h4>
-                                        <div className={s.preloader}>
-                                            <Preloader/>
-                                        </div>
-                                    </>
-                                    : <Button onClick={buyTicket}> Buy ticket to the event</Button>
-                            }
+                            <Button onClick={buyTicket}
+                                    disabled={isTransactionSent || (Date.now() - event.endDate > 0)}
+                            > Buy ticket to the event</Button>
                         </>
                         : <>
                             <h4>Please, authorize by MetaMask</h4>
@@ -117,7 +117,9 @@ const Event = React.memo(({event, userAddress}) => {
                         </>
                     }
                 </div>
-                : <h2> All tickets sold </h2>
+                : <div className={s.ticketsSold}>
+                    <h4> All tickets sold </h4>
+                </div>
             }
 
         </div>

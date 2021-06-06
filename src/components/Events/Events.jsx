@@ -7,7 +7,7 @@ import {NewEvent} from "./Event/NewEvent";
 import {useDispatch, useSelector} from "react-redux";
 import {getEvents} from "../../redux/events-reducer";
 import Preloader from "../common/Preloader/Preloader";
-import {eventProductionContract} from "../API/events-api";
+import {eventFactoryContract} from "../API/events-api";
 
 const Events = React.memo(({userAddress}) => {
 
@@ -25,7 +25,7 @@ const Events = React.memo(({userAddress}) => {
         dispatch(getEvents());
 
         //addEventListener web3 for new Event
-        eventProductionContract.events.NewEventAdded()
+        eventFactoryContract.events.NewEventAdded()
             .on('data', function(event){
                 dispatch(getEvents());
                 setEventEndWaiting(true)
