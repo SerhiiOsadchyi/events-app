@@ -16,6 +16,7 @@ const Event = React.memo(({event, userAddress}) => {
 
     useEffect(() => {
         dispatch(updateTicketsAC(event.ticketsContractAddress, event.eventID));
+
         ticketsContract.events.NewTicketCreated()
             .on('data', function (e) {
                 dispatch(updateTicketsAC(event.ticketsContractAddress, event.eventID));

@@ -32,7 +32,7 @@ contract TicketsFactory is ERC721 {
 
     Ticket[] public tickets;
 
-    mapping(uint => uint) ticketByEvent;
+    mapping(uint => uint[]) ticketFromTickets;
     mapping(address => uint) ticketByAddress;
     mapping(uint => address) addressByTicket;
 
@@ -87,10 +87,18 @@ contract TicketsFactory is ERC721 {
          return ticketId;
      }
 
-    function changeTicketOwner(uint _id, address payable _newOwnerAddress) public payable onlyOwner {
-        address ticketOwner = tickets[_id].ticketOwner;
-        require(msg.sender == ticketOwner, "Only ticket's' owner can call this function");
-        safeTransferFrom(ticketOwner, _newOwnerAddress, tickets[_id].id);
+    function changeTicketOwner(address _oldOwner,  address _newOwner, uint256  _id)  external payable {
+        require(_oldOwner == ownerOf(_id), "Only owner can to transfer this ticket");
+        safeTransferFrom(_oldOwner, _newOwner, _id);
+
+        for (uint i = 0; i < tickets.length; i++) {
+            if (tickets[i].id == _id && tickets[i].ticketOwner == _oldOwner) {
+                tickets[i].ticketOwner = _newOwner;
+                break;
+            }
+        }
+
+        emit Transfer(msg.sender, _newOwner, _id);
     }
 
     function ticketsList() public view returns (Ticket[] memory){
@@ -118,5 +126,14 @@ name, description, location, ticket price tickets in ETH, start date and end dat
 4. At the bottom of the event block there is a ticket control block - a ticket ID entry window with information near
 about the ticket status ("Pending", "Payment was successful”), also a block has a window for entering an ether wallet address
 and " Transfer ticket "button, after clicking on this button the owner of the ticket will changes on entered address
+
+*/
+
+/*
+Примечания:
+1. Прослушивание событий из блокчейна не всегда срабатывает:
+для ивентов сделал прослушивание события как круговорот через редюсер,
+для тикетов - с помощью слушателя.
+2. Начальные данные редактировать можно в файле events-api.js (src/components/API/events-api.js)
 
 */

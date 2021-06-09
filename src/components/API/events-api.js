@@ -4,7 +4,7 @@ export const web3 = new Web3(Web3.givenProvider || 'http://127.0.0.1:7545');
 //ABI for Ropsten
 export const TicketsFactory = require('../../ABIs/TicketsFactory.json');
 export const EventFactory = require('../../ABIs/EventFactory.json');
-export const contractAddress = '0x3160ce5ab67c54a05238c5eeb7d99fc43bda3da5';
+export const contractAddress = '0x700abc6e73f2c849e96c8fa7be0b39970e795a83';
 export const ownerAddress = '0x579a7303065e83B7c2999d6c8FB9a64272d68275';
 
 const eventFactoryContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
@@ -60,9 +60,20 @@ export const eventsAPI = {
                 return response.events.NewTicketCreated.returnValues.ticketId
             })
     },
+
     getTicketsAPI(ticketsContractAddress) {
         const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
         return ticketsContract.methods.ticketsList().call();
+    },
+
+    changeTicketOwnerAPI(ticketId, ticketPrice, ticketNewOwner, ticketsContractAddress, userAddress) {
+        const ticketsContract = new web3.eth.Contract(TicketsFactory.abi, ticketsContractAddress);
+        ticketPrice = Web3.utils.toWei(ticketPrice.toString(), 'ether');
+        return ticketsContract.methods.changeTicketOwner(userAddress, ticketNewOwner, ticketId)
+            .send({from: userAddress})
+            .on('data', function () {
+            console.log('changed Ticket Owner success');
+        });
     }
 
 }

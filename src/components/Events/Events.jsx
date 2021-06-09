@@ -7,18 +7,20 @@ import {NewEvent} from "./Event/NewEvent";
 import {useDispatch, useSelector} from "react-redux";
 import {getEvents} from "../../redux/events-reducer";
 import Preloader from "../common/Preloader/Preloader";
-import {contractAddress, EventFactory, web3} from "../API/events-api";
+//import {contractAddress, EventFactory, web3} from "../API/events-api";
 
 const Events = React.memo(({userAddress}) => {
 
     const isOwner =  useSelector(state => state.userAuthorize.isOwner);
     const events = useSelector(state => state.eventsPage.events);
-    const eventFactoryContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
+    const isEventAdded = useSelector(state => state.eventsPage.isEventAdded);
+    //const eventFactoryContract = new web3.eth.Contract(EventFactory.abi, contractAddress);
 
     //open and close table "Add new event"
     const [newEventMode, setNewEventMode] = useState(false);
+
     //open and close spinner while event response received from MetaMask
-    const [isEventAdded, setEventEndWaiting] = useState(true);
+    //const [isEventAdded, setEventEndWaiting] = useState(true);
 
     const dispatch = useDispatch();
 
@@ -26,12 +28,12 @@ const Events = React.memo(({userAddress}) => {
         dispatch(getEvents());
 
         //addEventListener web3 for new Event
-        eventFactoryContract.events.NewEventAdded()
+        /*eventFactoryContract.events.NewEventAdded()
             .on('data', function(e){
                 dispatch(getEvents());
                 setEventEndWaiting(true)
-            });
-    },[]);
+            });*/
+    }, [isEventAdded]);
 
     const addEvent = () => {
         setNewEventMode(true)
@@ -40,7 +42,7 @@ const Events = React.memo(({userAddress}) => {
     //close Add new event table
     const closeNewEventMode = () => {
         setNewEventMode(false);
-        setEventEndWaiting(false)
+       // setEventEndWaiting(false)
     }
 
     return (
