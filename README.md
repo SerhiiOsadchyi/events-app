@@ -1,4 +1,4 @@
-# /////  Administrator rules  \\\\\
+# Administrators rules 
 
 The site visitor, after entering the administrator's address and password in the Metamask authorization panel, has access to:
 
@@ -14,7 +14,7 @@ and the event will be removed from the list of events on the site.
 If the event has an end time less than the current time, the ticket sales button will be disactive.
 
 
-## /////  Regular user  \\\\\
+##  Regular user 
 
 A regular site visitor after authorization by Metamask:
 
