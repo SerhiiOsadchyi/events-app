@@ -110,22 +110,29 @@ contract TicketsFactory is ERC721 {
 /*
 USE CASE / USER STORIES
 
-The event organizer creates a new event:
-1. The user enters an events creation page under the login / password issued to him and fills out a form with the necessary data for the event -
-name, description, location, number of available tickets, cost of tickets in   ETH, start date and end date.
-2. After clicking the confirmation button, a new event is created in the blockchain, while before the start date
-or before the sale of all tickets, ticket sales are available on the ticket purchase page (then the buy button is inactive),
-after the end date the event is not displayed in the list of available
-3. The user can cancel the event by clicking the Cancel button. After click  the button, the event disappears from the available ones.
-The organizer makes refunds  to customers manually without using the application.
+/////  Administrator rules  \\\\\
 
-On the second page of the application, a regular visitor can buy a ticket to the event
-1. The page displays a list of events, end date that greater than a current date. Each event displays an information -
-name, description, location, ticket price tickets in ETH, start date and end date.
-2. Each event has a window for entering an  ether wallet address and a ticket purchase button for buy it, which is active if there are free tickets
-4. At the bottom of the event block there is a ticket control block - a ticket ID entry window with information near
-about the ticket status ("Pending", "Payment was successful”), also a block has a window for entering an ether wallet address
-and " Transfer ticket "button, after clicking on this button the owner of the ticket will changes on entered address
+The site visitor, after entering the administrator's address and password in the Metamask authorization panel, has access to:
+
+1. Creation of a new event (Add new event button).
+After confirmation, a new event is created in the blockchain with the possibility of issuing tickets for the event.
+The number of tickets is limited to the specified number when creating an event.
+When all tickets have been sold, sell button will hide, an inscription will be displayed that all tickets have been sold.
+
+2. Closing events (button Close event).
+After confirmation, the event will go into the “closed” state, existing tickets for this event will be unavailable,
+and the event will be removed from the list of events on the site.
+
+If the event has an end time less than the current time, the ticket sales button will be disactive.
+
+
+/////  Regular user  \\\\\
+
+A regular site visitor after authorization by Metamask:
+
+1. Can buy a ticket by clicking on the "Buy ticket to the event" button.
+The buy button becomes inactive after all tickets have been sold and after the end date of the event
+2. The user can transfer his ticket to another address in the "My tickets" section (as a gift, without the sale option)
 
 */
 
