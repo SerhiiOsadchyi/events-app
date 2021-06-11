@@ -2,7 +2,7 @@
 
 For view this app you need to install MetaMask (https://metamask.io/download.html).
 
-The initial data you could edit in the file events-api.js  (src / components / API / events-api.js).
+The initial data: contract address (contractAddress), administrator address (ownerAddress), you could edit in the file events-api.js  (src / components / API / events-api.js).
 
 ABI you could edit in the ABI files (src / ABIs).
 
