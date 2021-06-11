@@ -1,4 +1,13 @@
-# Administrators rules 
+# Initial data
+
+For view this app you need to install MetaMask (https://metamask.io/download.html).
+
+The initial data you could edit in the events-api.js file (src / components / API / events-api.js).
+ABI you could to edit in src/ABIs.
+
+If you do not change the initial data, you could use this app only as a regular user without access to the basic functions of the application.
+
+## Administrators rules 
 
 The site visitor, after entering the administrator's address and password in the Metamask authorization panel, has access to:
 
@@ -14,7 +23,7 @@ and the event will be removed from the list of events on the site.
 If the event has an end time less than the current time, the ticket sales button will be disactive.
 
 
-##  Regular user 
+###  Regular user 
 
 A regular site visitor after authorization by Metamask:
 
