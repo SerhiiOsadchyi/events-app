@@ -2,9 +2,9 @@
 
 For view this app you need to install MetaMask (https://metamask.io/download.html).
 
-The initial data you could edit in the events-api.js file (src / components / API / events-api.js).
+The initial data you could edit in the file events-api.js  (src / components / API / events-api.js).
 
-ABI you could to edit in src/ABIs.
+ABI you could edit in the ABI files (src / ABIs).
 
 If you do not change the initial data, you could use this app only as a regular user without access to the basic functions of the application.
 
