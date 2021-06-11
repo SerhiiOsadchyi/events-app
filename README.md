@@ -1,4 +1,4 @@
-# Initial data
+## Initial data
 
 For view this app you need to install MetaMask (https://metamask.io/download.html).
 
