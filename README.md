@@ -1,4 +1,14 @@
-# Administrators rules 
+## Initial data
+
+For view this app you need to install MetaMask (https://metamask.io/download.html).
+
+The initial data: contract address (contractAddress), administrator address (ownerAddress), you could edit in the file events-api.js  (src / components / API / events-api.js).
+
+ABI you could edit in the ABI files (src / ABIs).
+
+If you do not change the initial data, you could use this app only as a regular user without access to the basic functions of the application.
+
+## Administrators rules 
 
 The site visitor, after entering the administrator's address and password in the Metamask authorization panel, has access to:
 
